@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Friendship Birthday Challenge 🎯</title>
+  <style>
+    :root{
+      --pink:#ff5ca2;--pink2:#ff8ccf;--deep:#d4007f;--bg1:#ffd6ec;--bg2:#ffeef8;--ink:#5a2b5f;
+      --card:#ffffff;--soft:#fff3f8;--shadow:0 8px 24px rgba(0,0,0,.12)
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family: ui-rounded, "SF Pro Rounded", "Comic Sans MS", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color:var(--ink);
+      background: radial-gradient(1200px 800px at 20% 10%, #fff 0 30%, transparent 30%), linear-gradient(135deg,var(--bg1),var(--bg2));
+      min-height:100vh;
+    }
+
+    /* 🏡 Home & Side Nav */
+    .home{position:fixed;top:12px;left:12px;z-index:50}
+    .home a{
+      text-decoration:none;background:var(--soft);padding:8px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.08);
+      font-weight:700;color:var(--pink)
+    }
+    .side-nav{
+      position:fixed;left:0;top:58px;padding:12px;width:190px;background:rgba(255,255,255,.75);
+      backdrop-filter: blur(8px);border-radius:0 18px 18px 0;box-shadow:0 6px 20px rgba(0,0,0,.06);z-index:40
+    }
+    .side-nav ul{list-style:none;margin:0;padding:0}
+    .side-nav li{margin:10px 0}
+    .side-nav a{text-decoration:none;color:var(--pink);font-weight:700}
+    .side-nav a.active{color:var(--deep)}
+
+    /* Layout wrapper to avoid side-nav overlap */
+    .wrap{max-width:1000px;margin:0 auto;padding:24px 20px 80px 220px}
+
+    /* 🎀 Hero Section */
+    .hero{ text-align:center; padding:70px 18px 40px; }
+    .hero h1{font-size:clamp(28px,5vw,42px);color:var(--deep);margin:0 0 10px}
+    .hero .subtitle{font-size:clamp(16px,2.5vw,20px);opacity:.9;margin:0 0 14px}
+    .hero .landing{font-size:clamp(14px,2.2vw,17px);opacity:.95;margin:0 0 24px;line-height:1.6}
+    .start-btn{
+      background:linear-gradient(135deg,var(--pink2),var(--pink));color:#fff;border:none;border-radius:999px;
+      padding:12px 28px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:var(--shadow);transition:.2s transform
+    }
+    .start-btn:hover{transform:translateY(-2px)}
+    .floaty{
+      position:absolute;inset:auto auto;opacity:.25;font-size:26px;animation:float 6s ease-in-out infinite
+    }
+    .floaty:nth-child(1){top:20%;left:6%}
+    .floaty:nth-child(2){top:14%;right:10%}
+    .floaty:nth-child(3){bottom:12%;left:12%}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+    /* 🌟 Game UI */
+    .hidden{display:none}
+    .card{
+      background:var(--card); border-radius:18px; box-shadow:var(--shadow); padding:24px; margin-top:18px;
+    }
+    .progress{ text-align:center; font-weight:800; margin: 6px 0 14px; font-size: 1.1rem; color: var(--deep); }
+    .prompt{ font-size:18px; text-align:center; padding:18px; border-radius:14px; background: #fff6fb; border:2px dashed #ffc3e4; font-weight: 600; }
+    .hint{ margin:12px auto 0; max-width:560px; padding:10px 14px; text-align:center; background:var(--soft); border-radius:12px; border:1px dashed #ffb6da; font-style:italic }
+    .interact{ text-align:center; padding:16px; min-height:120px }
+    input[type=text]{ padding:12px 14px; border-radius:12px; border:2px solid #ffd0e9; width:min(90%,340px); font-size:16px; text-align:center }
+    .btn{ background:var(--pink); color:#fff; border:none; border-radius:999px; padding:10px 22px; font-weight:800; cursor:pointer; transition: all 0.2s ease; }
+    .btn:hover{ background: var(--deep); transform: scale(1.03); }
+    .btn-soft{ background:var(--pink2) }
+
+    /* Toast / badge */
+    .toast{
+      position:fixed; left:50%; transform:translateX(-50%) translateY(20px); bottom:24px; background:#2c0930;
+      color:#fff; padding:12px 20px; border-radius:12px; box-shadow:var(--shadow); opacity:0; pointer-events:none;
+      transition:.25s; z-index:60; font-weight:700
+    }
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(0) }
+
+    .badges{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:14px }
+    .badge{ background:#fff; border:2px solid #ffd0e9; border-radius:12px; padding:8px 12px; font-weight:800; color:#d4007f; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+    /* Specific level widgets */
+    .photo-frame{ position:relative; width:min(520px, 90%); margin:10px auto }
+    .zoomed{ width:100%; height:300px; background:#ddd center/cover no-repeat; border-radius:14px; box-shadow:var(--shadow); }
+    .choices{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px }
+    .choice{ background:#fff; border:2px solid #ffd0e9; border-radius:12px; padding:12px 18px; cursor:pointer; font-weight:800; color: var(--ink); transition: all 0.2s ease; }
+    .choice:hover{ background:#fff6fb; border-color: var(--pink); transform: translateY(-2px); }
+
+    .drag-list{ max-width:620px; margin: 14px auto; }
+    .line{ background:#fff; border:2px dashed #dad1f8; border-radius:12px; padding:12px 16px; margin:8px 0; cursor:grab; user-select:none; font-weight: 600; text-align: left; }
+    .line.dragging{ opacity:.7; transform:scale(.98) }
+
+    .gif-grid{ display:grid; grid-template-columns:repeat(3,minmax(120px,1fr)); gap:12px; max-width:680px; margin:14px auto }
+    .gif-card{ background:#fff; padding:8px; border-radius:12px; border:2px solid #ffd0e9; cursor:pointer; transition:.2s transform; }
+    .gif-card:hover{ transform:translateY(-3px); border-color: var(--pink); }
+    .gif-card img{ width:100%; height: 160px; object-fit: cover; border-radius:8px }
+
+    .tap-area{ position:relative; height:260px; background:linear-gradient(180deg,rgba(255,154,203,.12),rgba(205,164,255,.12)); border-radius:14px; overflow:hidden; border: 2px dashed #ffc3e4; }
+    .tap-obj{ position:absolute; font-size:32px; cursor:pointer; user-select:none; filter:drop-shadow(0 4px 10px rgba(0,0,0,.15)); animation:pop .3s ease }
+    @keyframes pop{ from{ transform:scale(0)} to{ transform:scale(1)}}
+
+    /* 🎇 Final */
+    .final{ text-align:center; margin-top:18px }
+    .scrap{ display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin:20px auto }
+    .entry{ position:relative; background:#fffef6; border:2px solid #ffd6ec; border-radius:14px; padding:14px 16px; width:min(260px, 90%); box-shadow:2px 4px 12px rgba(0,0,0,.08); text-align: left; }
+    .entry::before{ content:'📌'; position:absolute; top:-12px; left:12px; font-size: 1.2rem; }
+    .reward{ display:block; margin:22px auto; background:linear-gradient(135deg,var(--pink2),var(--pink)); color:#fff; padding:14px 28px; border:none; border-radius:999px; font-weight:800; font-size: 1.1rem; cursor:pointer; box-shadow:var(--shadow); transition: transform 0.2s; }
+    .reward:hover{ transform: scale(1.05); }
+    .video-wrap{text-align:center;margin-top:16px}
+    video{ max-width:850px; width:95%; border-radius:14px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+
+    /* Responsive */
+    @media (max-width:900px){ .wrap{padding-left:16px} .side-nav{position:static;width:auto;border-radius:0;box-shadow:none;margin:0 0 12px} }
+  </style>
+</head>
+<body>
+  <!-- 🎵 Background audio player -->
+  <audio id="bg-audio" autoplay style="position: fixed; top: 12px; right: 12px; z-index: 9999;" controls></audio>
+
+  <!-- 🏡 Home Button -->
+  <div class="home"><a href="index.html">Home 🏡</a></div>
+
+  <!-- 🌟 Side Navigation -->
+  <nav class="side-nav" aria-label="Main Navigation">
+    <ul>
+      <div class="li1">
+        <li><a href="Gallery.html">Gallery 🖼️</a></li>
+        <li><a href="Letter-Quotes.html">Birthday Letter 💌</a></li>
+        <li><a href="Surprise-Wheel.html">Surprise Wheel 🎡</a></li>
+      </div>
+      <div class="li2">
+        <li><a href="Secret-Message.html">Secret Message 🤫</a></li>
+        <li><a href="Challenge.html" class="active">Challenge 🎯</a></li>
+        <li><a href="Magical-Ending.html">Magical Ending ✨</a></li>
+      </div>
+    </ul>
+  </nav>
+
+  <div class="wrap">
+    <!-- 🎀 Hero Section -->
+    <section id="hero" class="hero card" style="position:relative">
+      <div class="floaty">✨</div>
+      <div class="floaty">💖</div>
+      <div class="floaty">⭐</div>
+      <h1>🎯 The Friendship Birthday Challenge 🎯</h1>
+      <p class="subtitle">8 fun levels to test our friendship memories, inside jokes & birthday vibes! ✨</p>
+      <p class="landing">
+        Think you know everything about our chaotic conversations, funny moments, and shared dreams?<br/>
+        Clear all 8 levels to collect the badges and unlock the ultimate birthday reward! 🏆🎈
+      </p>
+      <button id="start-btn" class="start-btn">Start Challenge 🚀</button>
+    </section>
+
+    <!-- 🌟 Game Section -->
+    <section id="game" class="hidden card">
+      <div class="progress">Level <span id="level-num">1</span> of 8 — Badges Collected: <span id="badge-count">0</span> / 8</div>
+      <div id="prompt" class="prompt">Prompt will go here</div>
+      <div id="hint" class="hint hidden">Hint will go here</div>
+      <div id="interact" class="interact"></div>
+      <div id="badge-bar" class="badges"></div>
+      <div style="text-align:center;margin-top:16px">
+        <button id="next-btn" class="btn btn-soft hidden">Next Level ➡️</button>
+      </div>
+    </section>
+
+    <!-- 🎇 Final Surprise -->
+    <section id="final" class="hidden card">
+      <div class="final">
+        <h2 style="color:var(--deep);font-size:2rem;margin-bottom:8px">🎉 Challenge Complete! 🎉</h2>
+        <p style="font-size:1.1rem;font-weight:700">You conquered every single level! 💖</p>
+        <p>Proof that true friendship isn't just about sharing time—it's about the laughs, the loyalty, and the memories we build together.</p>
+      </div>
+      <div id="scrap" class="scrap"></div>
+      <p style="text-align:center;font-weight:800;color:#d4007f;margin-top:12px;font-size:1.15rem">
+        Here's to a lifetime of friendship, laughter, and new milestones! 💫✨
+      </p>
+      <button id="reward" class="reward">Unwrap Birthday Reward 🎁</button>
+      <div id="video-wrap" class="video-wrap hidden">
+        <video id="surprise-video" controls>
+          <source src="videos/memories.mp4" type="video/mp4"/>
+        </video>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Toast</div>
+
+  <script>
+    // Playlist: song0 → song20
+    const playlist = [];
+    for (let i = 0; i <= 20; i++) {
+      playlist.push(`audio/song${i}.mp3`);
+    }
+
+    const bgAudio = document.getElementById("bg-audio");
+    let lastSong = null;
+
+    function getRandomSong() {
+      if (playlist.length <= 1) return playlist[0];
+      let song;
+      do {
+        const randomIndex = Math.floor(Math.random() * playlist.length);
+        song = playlist[randomIndex];
+      } while (song === lastSong);
+      lastSong = song;
+      return song;
+    }
+
+    function playNextSong() {
+      const nextSong = getRandomSong();
+      bgAudio.src = nextSong;
+      bgAudio.play().catch(() => {});
+    }
+
+    bgAudio.addEventListener("ended", playNextSong);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      bgAudio.volume = 0.4;
+      playNextSong();
+    });
+
+    const allMedia = document.querySelectorAll("video");
+    allMedia.forEach(media => {
+      media.addEventListener("play", () => {
+        if (!bgAudio.paused) bgAudio.pause();
+      });
+      media.addEventListener("ended", () => {
+        bgAudio.play().catch(() => {});
+      });
+      media.addEventListener("pause", () => {
+        const anyPlaying = Array.from(allMedia).some(m => !m.paused && !m.ended);
+        if (!anyPlaying) bgAudio.play().catch(() => {});
+      });
+    });
+
+    // ---------- Helpers ----------
+    const $ = (sel, root=document)=>root.querySelector(sel);
+    const $$ = (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+    const toast = (msg)=>{
+      const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+      setTimeout(()=> t.classList.remove('show'), 2000);
+    };
+    const show = el => el.classList.remove('hidden');
+    const hide = el => el.classList.add('hidden');
+
+    // ---------- State ----------
+    let level = 0;
+    const totalLevels = 8;
+    const badges = [];
+    const scrapbookAnswers = {};
+
+    const levelDefs = [
+      // 1) Emoji Story Decoder
+      {
+        title: "Emoji Story Decoder",
+        prompt: "📜 Decode this ultimate hangout memory: 🍕📸😂🛵🎉",
+        setup() {
+          $('#interact').innerHTML = `
+            <input id="l1in" type="text" placeholder="Type your answer (e.g. food, photo, fun)…" />
+            <div style="margin-top:12px"><button id="l1btn" class="btn">Check Answer ✨</button></div>
+          `;
+          const keywords = ["food", "pizza", "photo", "pic", "fun", "laugh", "party", "trip", "adventure", "snack", "memories", "hangout", "selfie"];
+          let wrongCount = 0;
+
+          $('#l1btn').onclick = () => {
+            const v = $('#l1in').value.trim().toLowerCase();
+            const ok = keywords.some(k => v.includes(k));
+
+            if (ok) {
+              toast("Spot on! Pizza, photos & unstoppable laughing! 😂🍕💖");
+              badges.push("Memory Master 🧠");
+              renderBadges();
+              show($('#next-btn'));
+            } else {
+              wrongCount++;
+              $('#hint').textContent = wrongCount === 1
+                ? "Hint: Think about what happens whenever we hang out—food, photos, and uncontrollable laughter!"
+                : "Hint: Try typing words like 'pizza', 'fun', 'photo', or 'party' 😉";
+              show($('#hint'));
+              toast("Close! Think about our favorite hangout vibes 😅");
+            }
+          };
+        }
+      },
+
+      // 2) Photo Spot Hunt
+      {
+        title: "Spot the Hangout Spot",
+        prompt: "📸 Where do the greatest friendship conversations and inside jokes happen?",
+        setup() {
+          $('#interact').innerHTML = `
+            <div class="photo-frame">
+              <div id="zoom" class="zoomed" style="background-image: url('images/zoom-photo.jpg')"></div>
+            </div>
+            <div class="choices">
+              <button class="choice" data-a="campusSpot">The Favorite Campus Hangout Spot</button>
+              <button class="choice" data-a="cafe">The Late-Night Coffee Corner</button>
+              <button class="choice" data-a="bench">The Canteen Food Station</button>
+            </div>
+          `;
+
+          let wrong = 0;
+          $$('.choice').forEach(btn => {
+            btn.onclick = () => {
+              if (btn.dataset.a === "campusSpot") {
+                toast("You know it! That's where all the legendary chats and selfies happen! 🔍✨");
+                badges.push("Sharp Eye 🔍");
+                renderBadges();
+                show($('#next-btn'));
+              } else {
+                wrong++;
+                $('#hint').textContent = wrong === 1
+                  ? "Hint: Think about the spot where we take all the candid group photos!"
+                  : "Hint: Our favorite campus hangout spot where the best memories began 💕";
+                show($('#hint'));
+                toast("Almost! Try another spot 😃");
+              }
+            };
+          });
+        }
+      },
+
+      // 3) Q&A — Spontaneous Trip Destination
+      {
+        title: "The Spontaneous Road Trip",
+        prompt: "If we could take off on an unplanned birthday road trip right now, where would we go? 🚗✈️",
+        setup() {
+          $('#interact').innerHTML = `
+            <input id="l3in" type="text" placeholder="Type your dream destination…"/>
+            <div style="margin-top:12px"><button id="l3btn" class="btn">Lock In Destination 🗺️</button></div>
+          `;
+          $('#l3btn').onclick = ()=>{
+            const ans = $('#l3in').value.trim();
+            toast("Pack your bags—booked in our future adventure calendar! ✈️🌍");
+            badges.push("Adventure Seeker 🧭");
+            renderBadges();
+            show($('#next-btn'));
+            scrapbookAnswers["wishWhere"] = {
+              q: levelDefs[level].prompt,
+              a: ans || "Anywhere with good snacks and loud music!",
+              comment: "Officially added to our travel bucket list! 🎒✈️"
+            };
+          };
+        }
+      },
+
+      // 4) Friendship Anthem Lyrics Match
+      {
+        title: "Friendship Anthem Reorder",
+        prompt: "Arrange the lines of our friendship anthem into the right order! 🎶",
+        setup() {
+          const linesCorrect = [
+            "Side by side or miles apart,",
+            "Friends are always close at heart.",
+            "Through every laugh and every tear,",
+            "We celebrate another golden year!"
+          ];
+          const lines = [...linesCorrect].sort(() => Math.random() - 0.5);
+
+          $('#interact').innerHTML = `
+            <div class="drag-list" id="dragList"></div>
+            <div style="text-align:center;margin-top:12px">
+              <button id="checkOrder" class="btn">Check Rhyme Order 🎵</button>
+            </div>
+          `;
+
+          const list = $('#dragList');
+          lines.forEach(l => {
+            const div = document.createElement('div');
+            div.className = 'line';
+            div.textContent = l;
+            div.setAttribute('draggable', 'true');
+            list.appendChild(div);
+          });
+
+          // Drag and drop logic
+          let dragEl = null;
+          list.addEventListener('dragstart', e => {
+            if (e.target.classList.contains('line')) {
+              dragEl = e.target;
+              dragEl.classList.add('dragging');
+            }
+          });
+          list.addEventListener('dragend', () => {
+            if (dragEl) {
+              dragEl.classList.remove('dragging');
+              dragEl = null;
+            }
+          });
+          list.addEventListener('dragover', e => {
+            e.preventDefault();
+            const after = getDragAfterElement(list, e.clientY);
+            const dragging = $('.line.dragging', list);
+            if (!dragging) return;
+            if (after == null) list.appendChild(dragging);
+            else list.insertBefore(dragging, after);
+          });
+
+          function getDragAfterElement(container, y) {
+            const els = [...container.querySelectorAll('.line:not(.dragging)')];
+            return els.reduce((closest, child) => {
+              const box = child.getBoundingClientRect();
+              const offset = y - box.top - box.height / 2;
+              if (offset < 0 && offset > closest.offset) {
+                return { offset, element: child };
+              } else {
+                return closest;
+              }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+          }
+
+          let wrong = 0;
+          $('#checkOrder').onclick = () => {
+            const cur = $$('.line', list).map(x => x.textContent.trim());
+            const ok = cur.every((v, i) => v === linesCorrect[i]);
+
+            if (ok) {
+              toast("Harmony achieved! You got the rhyme down perfectly! 🎶🎉");
+              badges.push("Lyric Legend 🎤");
+              renderBadges();
+              show($('#next-btn'));
+            } else {
+              wrong++;
+              $('#hint').textContent = wrong === 1
+                ? "Hint: Look at the rhyming pairs: 'apart' rhymes with 'heart', and 'tear' rhymes with 'year'!"
+                : "Line 1 starts with 'Side by side...', and ends with '...another golden year!'";
+              show($('#hint'));
+              toast("Almost! Try swapping the lines around.");
+            }
+          };
+        }
+      },
+
+      // 5) Goofy GIF Pick
+      {
+        title: "The 'Act Normal' Test",
+        prompt: "Pick the GIF that matches our reaction when someone says: 'Please act completely normal!' 😂",
+        setup() {
+          $('#interact').innerHTML = `
+            <div class="gif-grid">
+              <div class="gif-card" data-ok="0"><img src="gifs/laugh1.gif" alt="gif1"/></div>
+              <div class="gif-card" data-ok="1"><img src="gifs/laugh-right.gif" alt="gif2"/></div>
+              <div class="gif-card" data-ok="0"><img src="gifs/laugh3.gif" alt="gif3"/></div>
+            </div>
+          `;
+          $$('.gif-card').forEach(c => {
+            c.onclick = () => {
+              if (c.dataset.ok === "1") {
+                toast("Accurate! We have never once succeeded at acting normal! 🤣💯");
+                badges.push("Chaos Champion 🤪");
+                renderBadges();
+                show($('#next-btn'));
+              } else {
+                $('#hint').textContent = "Hint: Try the one that radiates maximum laughing chaos in the middle! 😎";
+                show($('#hint'));
+                toast("Haha, close! Try another one 😅");
+              }
+            };
+          });
+        }
+      },
+
+      // 6) Q&A — Favorite Quality
+      {
+        title: "Friendship Super-Power",
+        prompt: "What is your single favorite thing about our friendship? 💖",
+        setup() {
+          $('#interact').innerHTML = `
+            <input id="l6in" type="text" placeholder="Type your answer…"/>
+            <div style="margin-top:12px"><button id="l6btn" class="btn">Share Thought 💬</button></div>
+          `;
+          $('#l6btn').onclick = () => {
+            const ans = $('#l6in').value.trim();
+            toast("Whatever you just typed—and a million things more. True friend forever! 💖");
+            badges.push("Heart of Gold 💛");
+            renderBadges();
+            show($('#next-btn'));
+            scrapbookAnswers["bestTrait"] = {
+              q: levelDefs[level].prompt,
+              a: ans || "The effortless laughter and always being there.",
+              comment: "Priceless! Kept in the memory vault forever 🌟"
+            };
+          };
+        }
+      },
+
+      // 7) Speed Tap Game
+      {
+        title: "Speed Tap Party",
+        prompt: "Tap as many birthday stars ⭐ and party hearts 💖 as you can in 10 seconds!",
+        setup() {
+          $('#interact').innerHTML = `
+            <div style="text-align:center;margin-bottom:8px;font-weight:800;font-size:1.1rem">Score: <span id="score">0</span></div>
+            <div id="tapArea" class="tap-area"></div>
+            <div style="text-align:center;margin-top:12px"><button id="startTap" class="btn">Start Tapping ⚡</button></div>
+          `;
+          let score = 0; let running = false; let spawnTimer=null;
+          const area = $('#tapArea');
+          function spawnOne(){
+            if(!running) return;
+            const el = document.createElement('div');
+            el.className = 'tap-obj';
+            el.textContent = Math.random() > 0.5 ? '💖' : '⭐';
+            el.style.left = (Math.random()*84 + 6) + '%';
+            el.style.top  = (Math.random()*70 + 8) + '%';
+            el.onclick = () => { score++; $('#score').textContent = score; el.remove(); };
+            area.appendChild(el);
+            setTimeout(() => el.remove(), 1300);
+          }
+          $('#startTap').onclick = () => {
+            if(running) return;
+            running = true; score=0; $('#score').textContent=0; area.innerHTML='';
+            spawnTimer = setInterval(spawnOne, 240);
+            setTimeout(() => {
+              running = false;
+              clearInterval(spawnTimer);
+              toast(`Speed + reflex champ! Score: ${score} ⚡✨`);
+              badges.push("Lightning Reflexes ⚡");
+              renderBadges();
+              show($('#next-btn'));
+            }, 10000);
+          };
+        }
+      },
+
+      // 8) Q&A — Birthday Wish
+      {
+        title: "Wish to the Universe",
+        prompt: "What is your biggest wish or ambition for this brand new year of your life? 🎂✨",
+        setup() {
+          $('#interact').innerHTML = `
+            <input id="l8in" type="text" placeholder="Type your biggest birthday wish…"/>
+            <div style="margin-top:12px"><button id="l8btn" class="btn">Send Wish to the Stars 🌠</button></div>
+          `;
+          $('#l8btn').onclick = () => {
+            const ans = $('#l8in').value.trim();
+            toast("Wish launched into the cosmos—may every bit of it come true! 🌠✨");
+            badges.push("Dream Catcher 🌟");
+            renderBadges();
+            show($('#next-btn'));
+            scrapbookAnswers["superpower"] = {
+              q: levelDefs[level].prompt,
+              a: ans || "Success, joy, and peace of mind!",
+              comment: "Claimed and manifested for this year! 🚀🎉"
+            };
+          };
+        }
+      }
+    ];
+
+    // ---------- Flow ----------
+    $('#start-btn').addEventListener('click', () => {
+      hide($('#hero')); show($('#game'));
+      level = 0; badges.length = 0; renderLevel();
+    });
+
+    $('#next-btn').addEventListener('click', () => {
+      level++;
+      if (level < totalLevels) renderLevel();
+      else showFinal();
+    });
+
+    function renderLevel() {
+      hide($('#hint')); hide($('#next-btn'));
+      $('#badge-count').textContent = badges.length;
+      $('#level-num').textContent = (level + 1);
+      $('#prompt').textContent = levelDefs[level].prompt;
+      levelDefs[level].setup();
+    }
+
+    function renderBadges() {
+      $('#badge-count').textContent = badges.length;
+      const bar = $('#badge-bar'); bar.innerHTML = '';
+      badges.forEach(b => {
+        const el = document.createElement('div');
+        el.className = 'badge'; el.textContent = b;
+        bar.appendChild(el);
+      });
+    }
+
+    function showFinal() {
+      hide($('#game')); show($('#final'));
+      const scrap = $('#scrap'); scrap.innerHTML = '';
+
+      const defaults = [
+        { key: 'wishWhere', q: "Spontaneous Birthday Road Trip Destination:" },
+        { key: 'bestTrait', q: "Favorite Friendship Trait:" },
+        { key: 'superpower', q: "Birthday Wish to the Universe:" }
+      ];
+
+      defaults.forEach(d => {
+        const data = scrapbookAnswers[d.key] || { q: d.q, a: 'A year full of great adventures and smiles!', comment: 'Saved forever in our hearts ✨' };
+        const box = document.createElement('div');
+        box.className = 'entry';
+        box.innerHTML = `
+          <div style="font-weight:800;margin-bottom:6px;color:#d4007f">${d.q}</div>
+          <div style="background:#fff;border:1px dashed #ffd6ec;border-radius:8px;padding:8px 10px;font-size:0.95rem">${escapeHtml(data.a)}</div>
+          <div style="margin-top:8px;font-size:13px;color:#5a2b5f"><strong>Note:</strong> ${data.comment}</div>
+        `;
+        scrap.appendChild(box);
+      });
+    }
+
+    $('#reward').addEventListener('click', () => {
+      hide($('#reward'));
+      show($('#video-wrap'));
+      const v = $('#surprise-video');
+      v.currentTime = 0;
+      v.play().catch(() => {});
+    });
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, s => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[s]));
+    }
+  </script>
+</body>
+</html>

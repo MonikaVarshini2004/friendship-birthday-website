@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Little Birthday Letter 💌 | Friendship Celebration</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- 💌 Styles for Letter Quotes Page -->
+    <style>
+      body {
+        background-color: #0d0614;
+        background-image:
+          radial-gradient(ellipse 70% 50% at 50% -10%, rgba(236,72,153,0.22), transparent),
+          radial-gradient(ellipse 70% 50% at 20% 90%, rgba(168,85,247,0.18), transparent);
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      .home {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+      }
+      .home a {
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.12);
+        padding: 8px 18px;
+        border-radius: 999px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+      }
+      .home a:hover {
+        background: #ec4899;
+        transform: translateY(-2px);
+      }
+
+      .page-header {
+        text-align: center;
+        padding: 80px 20px 20px;
+      }
+      .page-header h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 800;
+        background: linear-gradient(100deg, #f472b6, #c084fc, #fbbf24);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+      }
+      .page-header p {
+        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.75);
+        max-width: 620px;
+        margin: 0 auto;
+      }
+
+      /* Memories container */
+      .memories-section {
+        max-width: 840px;
+        margin: 30px auto 80px;
+        padding: 0 20px;
+      }
+
+      .memory-card {
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        padding: 28px 32px;
+        margin-bottom: 30px;
+        transform: translateY(30px);
+        opacity: 0;
+        animation: fadeUp 0.8s ease forwards;
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .memory-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 40px rgba(236, 72, 153, 0.25);
+        border-color: rgba(244, 114, 182, 0.4);
+      }
+
+      .memory-card:nth-child(1) { animation-delay: 0.1s; }
+      .memory-card:nth-child(2) { animation-delay: 0.2s; }
+      .memory-card:nth-child(3) { animation-delay: 0.3s; }
+      .memory-card:nth-child(4) { animation-delay: 0.4s; }
+      .memory-card:nth-child(5) { animation-delay: 0.5s; }
+      .memory-card:nth-child(6) { animation-delay: 0.6s; }
+      .memory-card:nth-child(7) { animation-delay: 0.7s; }
+      .memory-card:nth-child(8) { animation-delay: 0.8s; }
+      .memory-card:nth-child(9) { animation-delay: 0.9s; }
+
+      @keyframes fadeUp {
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .memory-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #f472b6;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .memory-text {
+        font-size: 1rem;
+        line-height: 1.75;
+        color: rgba(255, 255, 255, 0.88);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 🎵 Audio Player -->
+    <audio id="bg-audio" autoplay style="position: fixed; top: 12px; right: 12px; z-index: 9999;" controls></audio>
+
+    <!-- 🏡 Home Button -->
+    <div class="home">
+      <a href="index.html">Home 🏡</a>
+    </div>
+
+    <!-- 🌟 Side Navigation -->
+    <nav class="side-nav" aria-label="Main Navigation">
+      <div class="nav1">
+        <ul>
+          <div class="li1">
+            <li><a href="Gallery.html">Gallery 🖼️</a></li>
+            <li><a href="Letter-Quotes.html">Birthday Letter 💌</a></li>
+            <li><a href="Surprise-Wheel.html">Surprise Wheel 🎡</a></li>
+          </div>
+          <div class="li2">
+            <li><a href="Secret-Message.html">Secret Message 🤫</a></li>
+            <li><a href="Challenge.html">Challenge 🎯</a></li>
+            <li><a href="Magical-Ending.html">Magical Ending ✨</a></li>
+          </div>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- 💌 Header -->
+    <header class="page-header">
+      <h1>A Little Birthday Letter 💌</h1>
+      <p>A few reminders of how much your friendship means, and why this day deserves the biggest celebration! ✨</p>
+    </header>
+
+    <!-- 💌 Letter Cards Section -->
+    <main class="memories-section">
+      <div class="memory-card">
+        <div class="memory-title">🌟 How It All Started</div>
+        <div class="memory-text">
+          Some of the best things in life happen completely unannounced. Looking back to when we first met and started talking, I had no idea you'd end up becoming one of the most important, dependable, and funniest people in my life. Every day since has been brighter with you in it!
+        </div>
+      </div>
+
+      <div class="memory-card">
+        <div class="memory-title">💬 Random Midnight Conversations</div>
+        <div class="memory-text">
+          From heartfelt life talks to completely unhinged 2 AM meme exchanges and rants about everything and nothing—our chats are always the highlight of my week. There’s never a filter needed, never any awkward silence, and always a laugh waiting on the other side.
+        </div>
+      </div>
+
+      <div class="memory-card">
+        <div class="memory-title">😂 The Laughs Nobody Else Understands</div>
+        <div class="memory-text">
+          There are moments where all we have to do is make eye contact, and both of us instantly lose it laughing. Our inside jokes are like an entire private language. Thank you for making everyday situations ten times funnier just by being there.
+        </div>
+      </div>
+
+      <div class="memory-card">
+        <div class="memory-title">🍕 Food Runs & Spontaneous Plans</div>
+        <div class="memory-text">
+          Whether it’s an impromptu snack run, hunting down the best ice cream in town, or turning a boring afternoon into a full-on adventure—life is simply so much more fun with you as a co-pilot. Here’s to many more spontaneous plans!
+        </div>
+      </div>
+
+      <div class="memory-card">
+        <div class="memory-title">🫂 True Support Through Everything</div>
+        <div class="memory-text">
+          Friendship isn't just about celebrating the good times; it's about having someone who listens without judging, who reminds you who you are when things get tough, and who always has your back. I appreciate your empathy, your patience, and your genuine heart more than words can say.
+        </div>
+      </div>
+
+      <div class="memory-card">
+        <div class="memory-title">📸 A Million Candid Moments</div>
+        <div class="memory-text">
+          For every blurry photo, goofy snapshot, and ridiculous selfie in our gallery, there’s an unforgettable story behind it. We don't just take pictures—we capture real, unvarnished memories that I’ll treasure forever.
+        </div>
+      </div>
+
+      <div class="memory-card">
+        <div class="memory-title">💫 Cheering On Your Dreams</div>
+        <div class="memory-text">
+          Watching you grow, chase your goals, and bring your unique passion to whatever you put your mind to is truly inspiring. Whatever dreams you're chasing this year, know that I’m standing in your corner cheering the loudest!
+        </div>
+      </div>
+
+      <div class="memory-card">
+        <div class="memory-title">✈️ Adventures Still Waiting For Us</div>
+        <div class="memory-text">
+          The best part about this friendship is knowing that the story is only just beginning. We still have cities to explore, road trips to take, concerts to sing our lungs out at, and a million new memories waiting to be made.
+        </div>
+      </div>
+
+      <div class="memory-card">
+        <div class="memory-title">🎂 The Biggest Birthday Wish</div>
+        <div class="memory-text">
+          On your special day, I wish you peace of mind, endless laughter, great health, and the kind of happiness that makes your heart feel completely full. You deserve every good thing this universe has to offer. Happy Birthday, my wonderful friend! 🎉🎂✨
+        </div>
+      </div>
+    </main>
+
+    <!-- JavaScript Audio Coordination -->
+    <script>
+      // Playlist: song0 → song20
+      const playlist = [];
+      for (let i = 0; i <= 20; i++) {
+        playlist.push(`audio/song${i}.mp3`);
+      }
+
+      const bgAudio = document.getElementById("bg-audio");
+      let lastSong = null;
+
+      function getRandomSong() {
+        if (playlist.length <= 1) return playlist[0];
+        let song;
+        do {
+          const randomIndex = Math.floor(Math.random() * playlist.length);
+          song = playlist[randomIndex];
+        } while (song === lastSong);
+        lastSong = song;
+        return song;
+      }
+
+      function playNextSong() {
+        const nextSong = getRandomSong();
+        bgAudio.src = nextSong;
+        bgAudio.play().catch(() => {});
+      }
+
+      bgAudio.addEventListener("ended", playNextSong);
+
+      window.addEventListener("DOMContentLoaded", () => {
+        bgAudio.volume = 0.4;
+        playNextSong();
+      });
+    </script>
+  </body>
+</html>

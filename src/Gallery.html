@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Friendship Memories 📸 | Birthday Celebration</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+      body {
+        background-color: #0d0614;
+        background-image:
+          radial-gradient(ellipse 80% 50% at 50% -10%, rgba(168,85,247,0.25), transparent),
+          radial-gradient(ellipse 60% 40% at 80% 90%, rgba(244,114,182,0.2), transparent);
+        margin: 0;
+        color: white;
+        min-height: 100vh;
+        font-family: 'Poppins', sans-serif;
+      }
+      .home {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+      }
+      .home a {
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.95rem;
+        background: rgba(255, 255, 255, 0.12);
+        padding: 8px 18px;
+        border-radius: 999px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+      }
+      .home a:hover {
+        background: #ff4b6e;
+        transform: translateY(-2px);
+      }
+
+      /* Audio Player Header */
+      .audio-container {
+        position: fixed;
+        top: 15px;
+        right: 220px;
+        z-index: 1001;
+      }
+      @media (max-width: 768px) {
+        .audio-container { right: 15px; }
+      }
+
+      /* Filter buttons */
+      .filter-buttons {
+        text-align: center;
+        margin: 70px 0 25px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 0 15px;
+      }
+      .filter-buttons button {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 25px;
+        color: white;
+        padding: 10px 22px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        user-select: none;
+      }
+      .filter-buttons button:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 75, 110, 0.3);
+        border-color: #ff4b6e;
+      }
+      .filter-buttons button.active {
+        background: linear-gradient(90deg, #ff4b6e, #a855f7);
+        border-color: transparent;
+        box-shadow: 0 0 20px rgba(255, 75, 110, 0.6);
+        transform: scale(1.05);
+      }
+
+      /* Shared gallery styles */
+      .gallery-section {
+        padding: 10px 20px 80px;
+        text-align: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: none;
+      }
+      .gallery-section.active {
+        display: block;
+        animation: fadeIn 0.6s ease forwards;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .gallery-title {
+        font-size: 2.2rem;
+        margin-bottom: 30px;
+        background: linear-gradient(90deg, #ff4b6e, #f59e0b, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 24px;
+        padding: 10px;
+      }
+
+      .gift-box {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 14px;
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .gift-box:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 14px 35px rgba(255, 75, 110, 0.25);
+        border-color: rgba(255, 75, 110, 0.4);
+      }
+
+      .gift-box img,
+      .gift-box video {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        background: #150920;
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+      }
+      .gift-box:hover img,
+      .gift-box:hover video {
+        transform: scale(1.03);
+      }
+
+      .caption {
+        margin-top: 12px;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #f3e8ff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        line-height: 1.4;
+      }
+
+      /* Lightbox overlay */
+      #lightbox-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(6, 2, 14, 0.92);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        cursor: pointer;
+        backdrop-filter: blur(12px);
+      }
+      #lightbox-content {
+        position: relative;
+        max-width: 88vw;
+        max-height: 85vh;
+        cursor: default;
+      }
+      #lightbox-img,
+      #lightbox-video {
+        max-width: 100%;
+        max-height: 85vh;
+        border-radius: 14px;
+        box-shadow: 0 0 35px rgba(244, 114, 182, 0.4);
+        display: block;
+        margin: 0 auto;
+      }
+      #lightbox-video {
+        display: none;
+        background: black;
+      }
+      #lightbox-caption {
+        margin-top: 14px;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      }
+      #lightbox-close {
+        position: absolute;
+        top: -42px;
+        right: 0;
+        font-size: 2.2rem;
+        color: white;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.2s ease;
+      }
+      #lightbox-close:hover {
+        transform: scale(1.2);
+        color: #ff4b6e;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 🎵 Background audio player -->
+    <audio id="bg-audio" autoplay style="position: fixed; top: 12px; right: 12px; z-index: 9999;" controls></audio>
+
+    <!-- 🏡 Home Button -->
+    <div class="home">
+      <a href="index.html">Home 🏡</a>
+    </div>
+
+    <!-- 🌟 Side Navigation -->
+    <nav class="side-nav" aria-label="Main Navigation">
+      <div class="nav1">
+        <ul>
+          <div class="li1">
+            <li><a href="Gallery.html">Gallery 🖼️</a></li>
+            <li><a href="Letter-Quotes.html">Birthday Letter 💌</a></li>
+            <li><a href="Surprise-Wheel.html">Surprise Wheel 🎡</a></li>
+          </div>
+          <div class="li2">
+            <li><a href="Secret-Message.html">Secret Message 🤫</a></li>
+            <li><a href="Challenge.html">Challenge 🎯</a></li>
+            <li><a href="Magical-Ending.html">Magical Ending ✨</a></li>
+          </div>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Filter Buttons -->
+    <div class="filter-buttons">
+      <button class="active" data-target="images-section">Memories & Moments 📸</button>
+      <button data-target="videos-section">Video Highlights 🎥</button>
+      <button data-target="funny-section">Laughs & Chaos 😂</button>
+      <button data-target="solo-section">Birthday Stars 🎂</button>
+    </div>
+
+    <!-- ==================== 1. Memories & Moments ==================== -->
+    <section id="images-section" class="gallery-section active" aria-label="Memories gallery">
+      <h1 class="gallery-title">📸 Friendship Memories Worth Keeping</h1>
+      <div class="gallery-grid">
+        <div class="gift-box">
+          <img src="images/friends-selfie.jpg" alt="Friends taking a happy selfie" />
+          <div class="caption">Too Many Photos, Never Enough Time 😂✨</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-laughing.jpg" alt="Friends laughing at a cafe" />
+          <div class="caption">Random Conversations & Unstoppable Laughs 💬☕</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-hugging.jpg" alt="Warm friendship hug" />
+          <div class="caption">Friends Make Everything Better 💕🫂</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-travel.jpg" alt="Friends road trip adventure" />
+          <div class="caption">Unplanned Adventures & Golden Memories 🚗💨</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-cake.jpg" alt="Delicious birthday cake" />
+          <div class="caption">Cake First, Questions Later! 🎂🍰</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-gift.jpg" alt="Stack of colorful birthday gifts" />
+          <div class="caption">Wrapped With Love & Friendship Chaos 🎁🎀</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friendship-group-01.jpg" alt="Friends celebrating together" />
+          <div class="caption">The Best Kind of Crew 🥳🌟</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-celebration.jpg" alt="Candles on birthday cake" />
+          <div class="caption">Make a Big Birthday Wish! ✨🕯️</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-balloons.jpg" alt="Colorful balloons celebration" />
+          <div class="caption">Floating High on Birthday Energy 🎈🎉</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-confetti.jpg" alt="Confetti celebration" />
+          <div class="caption">Celebrate Every Single Moment 🎊💫</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friendship-memory.jpg" alt="Friends sunset pose" />
+          <div class="caption">Memories That Never Fade 🌅💛</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-party.jpg" alt="Party sparkler celebration" />
+          <div class="caption">Lighting Up Another Wonderful Year 🎆✨</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-cafe.jpg" alt="Friends chatting in cafe" />
+          <div class="caption">Coffee, Pastries & Endless Gossip ☕🧁</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-cupcakes.jpg" alt="Sweet birthday cupcakes" />
+          <div class="caption">Extra Sweet Wishes For An Extra Sweet Friend 🧁💖</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-adventure.jpg" alt="Friends outdoor adventure" />
+          <div class="caption">Ready for the Next Big Journey ✈️🏔️</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friendship-forever.jpg" alt="Friends smiling together" />
+          <div class="caption">Besties for Life, Through Thick and Thin 💕✨</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. Video Highlights ==================== -->
+    <section id="videos-section" class="gallery-section" aria-label="Videos gallery">
+      <h1 class="gallery-title">🎥 Live Clips & Celebration Moments</h1>
+      <div class="gallery-grid">
+        <div class="gift-box">
+          <video src="videos/video1.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Dance Break & Pure Energy 💃🎉</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video2.mp4" muted preload="metadata" controls></video>
+          <div class="caption">When the Beat Drops 🎵🔥</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video3.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Unfiltered Friendship Vibes ✨👭</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video4.mp4" muted preload="metadata" controls></video>
+          <div class="caption">The Golden Hour Glow 🌅💫</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video5.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Laughter You Can Hear Across the Room 😂🔊</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video6.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Party Mood Activated 🎈🥳</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video7.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Spontaneous Celebrations 🍰✨</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video8.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Always Together in the Chaos 🌪️💖</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video9.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Candid Moments That Mean Everything 📸💓</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video10.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Cheers to Another Great Chapter 🥂🎊</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video11.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Friendship Playlist on Loop 🎶🎸</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video12.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Making Every Second Count ⏳💫</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video13.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Sweet Surprises & Big Smiles 🎁😄</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video14.mp4" muted preload="metadata" controls></video>
+          <div class="caption">That Sparkle in the Room ✨🌟</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video15.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Birthday Cheer All Around 🎂🎉</div>
+        </div>
+        <div class="gift-box">
+          <video src="videos/video16.mp4" muted preload="metadata" controls></video>
+          <div class="caption">Unstoppable Joy & Happy Hugs 🫂🌸</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. Laughs & Chaos ==================== -->
+    <section id="funny-section" class="gallery-section" aria-label="Funny moments gallery">
+      <h1 class="gallery-title">😂 Laughs, Bloopers & Inside Jokes</h1>
+      <div class="gallery-grid">
+        <div class="gift-box">
+          <img src="images/friends-silly-photo.jpg" alt="Friends making goofy faces" />
+          <div class="caption">Just Being Us 🤪 That Goofy Smile!</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-laughter.jpg" alt="Friends laughing uncontrollably" />
+          <div class="caption">Laughing Until Our Stomachs Hurt 🤣😂</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friendship-laughter-park.jpg" alt="Friends giggling outdoors" />
+          <div class="caption">Caught Laughing in Public Again 🙈😆</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-laughing-cafe.jpg" alt="Funny moment at table" />
+          <div class="caption">When the Joke Hits at the Wrong Moment 🤭☕</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friendship-highfive.jpg" alt="Celebratory high five" />
+          <div class="caption">Team Chaos High-Five! ✋⚡</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-dancing.jpg" alt="Silly dance celebration" />
+          <div class="caption">Dancing Like Nobody's Watching 💃🕺</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-picnic.jpg" alt="Friends laughing at picnic" />
+          <div class="caption">Who Stole the Snacks? 🍕👀</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-outdoor-fun.jpg" alt="Friends having outdoor fun" />
+          <div class="caption">Running Around Making Good Trouble 🏃‍♀️☀️</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-confetti-popper.jpg" alt="Confetti explosion" />
+          <div class="caption">Confetti in the Hair, Zero Regrets! 🎊😂</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-talking.jpg" alt="Friends gossiping" />
+          <div class="caption">Spilling Tea Since Day One 🫖💬</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friendship-polaroid.jpg" alt="Polaroid candid snap" />
+          <div class="caption">The Blurry Polaroids Tell the Best Stories 📸🎞️</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-fun.jpg" alt="Joyful funny moment" />
+          <div class="caption">Forever Silly, Forever Best Friends 😝💖</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. Birthday Stars ==================== -->
+    <section id="solo-section" class="gallery-section" aria-label="Birthday highlights gallery">
+      <h1 class="gallery-title">🌟 Birthday Highlights & Radiant Smiles</h1>
+      <div class="gallery-grid">
+        <div class="gift-box">
+          <img src="images/birthday-glow.jpg" alt="Glowing birthday celebration" />
+          <div class="caption">Shining Bright on Your Special Day 🌟✨</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-wishes.jpg" alt="Birthday wishes and gifts" />
+          <div class="caption">Wishing You All the Wonders of the Universe 🌌🎂</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-decorations.jpg" alt="Festive decorations" />
+          <div class="caption">The Celebration Starts Right Here 🎈🎊</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-balloons-party.jpg" alt="Balloons and smiles" />
+          <div class="caption">Another Year Older, A Million Times Brighter 🌞💖</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/birthday-cheers.jpg" alt="Birthday celebration cheers" />
+          <div class="caption">Cheers to You, Today and Always! 🥂💫</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-sparklers.jpg" alt="Sparkler lights" />
+          <div class="caption">Sparkles of Joy for the Birthday Star 🎆✨</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-sunset.jpg" alt="Golden sunset warmth" />
+          <div class="caption">A Golden Year Full of Bright Dreams 🌅💛</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-cozy-evening.jpg" alt="Cozy evening celebration" />
+          <div class="caption">Warm Hearts & Birthday Wishes 🕯️💕</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-guitar-singing.jpg" alt="Singing birthday songs" />
+          <div class="caption">Singing the Birthday Anthem at the Top of Our Lungs 🎶🎤</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-beach-sunset.jpg" alt="Sunset by the sea" />
+          <div class="caption">Endless Horizons Ahead 🌊⛵</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friends-rooftop.jpg" alt="Rooftop party celebration" />
+          <div class="caption">Under the Stars, Celebrating You 🌌🌠</div>
+        </div>
+        <div class="gift-box">
+          <img src="images/friendship-cheer.jpg" alt="Joyful cheer" />
+          <div class="caption">May All Your Biggest Dreams Come True! 💫💖</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox Overlay -->
+    <div id="lightbox-overlay" role="dialog" aria-modal="true">
+      <div id="lightbox-content">
+        <span id="lightbox-close" title="Close">✕</span>
+        <img id="lightbox-img" src="" alt="Enlarged view" />
+        <video id="lightbox-video" src="" controls></video>
+        <div id="lightbox-caption"></div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+      // 🎵 Playlist management: song0 to song20 (safe range matching existing files)
+      const playlist = [];
+      for (let i = 0; i <= 20; i++) {
+        playlist.push(`audio/song${i}.mp3`);
+      }
+
+      const bgAudio = document.getElementById("bg-audio");
+      let lastSong = null;
+
+      function getRandomSong() {
+        if (playlist.length <= 1) return playlist[0];
+        let song;
+        do {
+          const randomIndex = Math.floor(Math.random() * playlist.length);
+          song = playlist[randomIndex];
+        } while (song === lastSong);
+        lastSong = song;
+        return song;
+      }
+
+      function playNextSong() {
+        const nextSong = getRandomSong();
+        bgAudio.src = nextSong;
+        bgAudio.play().catch(() => {});
+      }
+
+      bgAudio.addEventListener("ended", playNextSong);
+
+      window.addEventListener("DOMContentLoaded", () => {
+        bgAudio.volume = 0.4;
+        playNextSong();
+      });
+
+      // Pause background music when video plays
+      const allMedia = document.querySelectorAll("video");
+      allMedia.forEach((media) => {
+        media.addEventListener("play", () => {
+          if (!bgAudio.paused) bgAudio.pause();
+        });
+        media.addEventListener("ended", () => {
+          bgAudio.play().catch(() => {});
+        });
+        media.addEventListener("pause", () => {
+          const anyPlaying = Array.from(allMedia).some((m) => !m.paused && !m.ended);
+          if (!anyPlaying) bgAudio.play().catch(() => {});
+        });
+      });
+
+      // Filter tabs switching
+      const buttons = document.querySelectorAll(".filter-buttons button");
+      const sections = document.querySelectorAll(".gallery-section");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          buttons.forEach((b) => b.classList.remove("active"));
+          button.classList.add("active");
+
+          const targetId = button.getAttribute("data-target");
+          sections.forEach((section) => {
+            if (section.id === targetId) {
+              section.classList.add("active");
+            } else {
+              section.classList.remove("active");
+            }
+          });
+
+          closeLightbox();
+        });
+      });
+
+      // Lightbox functionality
+      const overlay = document.getElementById("lightbox-overlay");
+      const lightboxImg = document.getElementById("lightbox-img");
+      const lightboxVideo = document.getElementById("lightbox-video");
+      const lightboxCaption = document.getElementById("lightbox-caption");
+      const closeBtn = document.getElementById("lightbox-close");
+
+      function addLightboxListeners() {
+        document.querySelectorAll(".gift-box img, .gift-box video").forEach((el) => {
+          el.addEventListener("click", () => {
+            const card = el.closest(".gift-box");
+            const captionText = card ? card.querySelector(".caption")?.textContent : "";
+            lightboxCaption.textContent = captionText || "";
+
+            if (el.tagName === "IMG") {
+              lightboxVideo.style.display = "none";
+              lightboxVideo.pause();
+              lightboxVideo.src = "";
+              lightboxImg.src = el.src;
+              lightboxImg.style.display = "block";
+            } else if (el.tagName === "VIDEO") {
+              lightboxImg.style.display = "none";
+              lightboxImg.src = "";
+              lightboxVideo.src = el.src;
+              lightboxVideo.style.display = "block";
+              lightboxVideo.play().catch(() => {});
+            }
+            overlay.style.display = "flex";
+          });
+        });
+      }
+
+      function closeLightbox() {
+        overlay.style.display = "none";
+        lightboxImg.src = "";
+        lightboxVideo.pause();
+        lightboxVideo.src = "";
+        lightboxImg.style.display = "none";
+        lightboxVideo.style.display = "none";
+        lightboxCaption.textContent = "";
+      }
+
+      closeBtn.addEventListener("click", closeLightbox);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeLightbox();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && overlay.style.display === "flex") {
+          closeLightbox();
+        }
+      });
+
+      addLightboxListeners();
+    </script>
+  </body>
+</html>

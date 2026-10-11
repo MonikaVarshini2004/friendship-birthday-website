@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hey Birthday Star! 🎂✨ | Friendship Celebration</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Dedicated Landing Page Enhancements */
+    .landing-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 13px 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff4b6e, #a855f7);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      box-shadow: 0 8px 25px rgba(255, 75, 110, 0.45);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .landing-cta:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 32px rgba(255, 75, 110, 0.65);
+    }
+    .heart-tap-hint {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 18px;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.1);
+      padding: 6px 16px;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      pointer-events: none;
+      white-space: nowrap;
+      animation: pulseHint 2s infinite ease-in-out;
+    }
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+      50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 🎵 Background music -->
+  <audio id="bg-music" loop>
+    <source src="audio/background.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- 🏡 Home Button -->
+  <div class="home">
+    <a href="index.html">Home 🏡</a>
+  </div>
+
+  <!-- 🎵 Music Toggle Button -->
+  <div class="music-player">
+    <button id="musicToggle" title="Toggle Music">🎵 Music</button>
+  </div>
+
+  <!-- 🎉 Birthday Hero Section -->
+  <div class="head">
+    <h1>Hey Birthday Star! 🎂✨</h1>
+    <div class="head2">
+      <h2>Today is all about celebrating you!</h2>
+      <p>The memories we've created, the laughs we've shared, and all the beautiful moments still waiting for us.</p>
+      <a href="Gallery.html" class="landing-cta">Start the Celebration ✨</a>
+    </div>
+  </div>
+
+  <!-- 🌟 Side Navigation -->
+  <nav class="side-nav" aria-label="Main Navigation">
+    <div class="nav1">
+      <ul>
+        <div class="li1">
+          <li><a href="Gallery.html">Gallery 🖼️</a></li>
+          <li><a href="Letter-Quotes.html">Birthday Letter 💌</a></li>
+          <li><a href="Surprise-Wheel.html">Surprise Wheel 🎡</a></li>
+        </div>
+        <div class="li2">
+          <li><a href="Secret-Message.html">Secret Message 🤫</a></li>
+          <li><a href="Challenge.html">Challenge 🎯</a></li>
+          <li><a href="Magical-Ending.html">Magical Ending ✨</a></li>
+        </div>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 💖 Heart Animation + Interactive Reveal Message -->
+  <div class="container" id="container" title="Click the heart!">
+    <div class="heart" id="heart"></div>
+    <div class="letter" id="letter">🎁</div>
+    <div class="heart-tap-hint" id="tapHint">Tap the heart to unwrap a wish ✨</div>
+    <div class="message-box" id="message">
+      💝 Wishing the happiest birthday to an extraordinary friend! May your year be filled with laughter, wild adventures, dreams fulfilled, and pure happiness! 🎉🎂✨
+    </div>
+  </div>
+
+  <!-- ✨ Interactive JavaScript -->
+  <script>
+    const bgMusic = document.getElementById("bg-music");
+    const musicToggle = document.getElementById("musicToggle");
+    let isPlaying = false;
+
+    // Handle music toggle
+    function toggleAudio() {
+      if (bgMusic.paused) {
+        bgMusic.volume = 0.5;
+        bgMusic.play().then(() => {
+          isPlaying = true;
+          musicToggle.textContent = "⏸️ Pause";
+        }).catch(err => console.log("Play blocked:", err));
+      } else {
+        bgMusic.pause();
+        isPlaying = false;
+        musicToggle.textContent = "🎵 Music";
+      }
+    }
+
+    musicToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleAudio();
+    });
+
+    // Try starting music on first user interaction anywhere
+    document.addEventListener("click", () => {
+      if (!isPlaying && bgMusic.paused) {
+        bgMusic.volume = 0.5;
+        bgMusic.play().then(() => {
+          isPlaying = true;
+          musicToggle.textContent = "⏸️ Pause";
+        }).catch(() => {});
+      }
+    }, { once: true });
+
+    let messageRevealed = false;
+
+    function revealMessage() {
+      const heart = document.getElementById('heart');
+      const letter = document.getElementById('letter');
+      const message = document.getElementById('message');
+      const tapHint = document.getElementById('tapHint');
+
+      heart.style.opacity = '0';
+      letter.style.opacity = '0';
+      if (tapHint) tapHint.style.display = 'none';
+      message.style.display = 'block';
+      messageRevealed = true;
+
+      // Start music if not yet playing
+      if (bgMusic.paused) {
+        bgMusic.volume = 0.5;
+        bgMusic.play().then(() => {
+          isPlaying = true;
+          musicToggle.textContent = "⏸️ Pause";
+        }).catch(() => {});
+      }
+    }
+
+    // Click on the container triggers the message
+    document.getElementById('container').addEventListener('click', function (e) {
+      if (!messageRevealed) {
+        revealMessage();
+      }
+    });
+
+    // Reset when clicking outside if message was revealed
+    document.body.addEventListener('click', function (e) {
+      const container = document.getElementById('container');
+      const musicBtn = document.getElementById('musicToggle');
+      if (messageRevealed && !container.contains(e.target) && e.target !== musicBtn) {
+        const heart = document.getElementById('heart');
+        const letter = document.getElementById('letter');
+        const message = document.getElementById('message');
+        const tapHint = document.getElementById('tapHint');
+
+        heart.style.opacity = '1';
+        letter.style.opacity = '1';
+        if (tapHint) tapHint.style.display = 'block';
+        message.style.display = 'none';
+        messageRevealed = false;
+      }
+    });
+  </script>
+</body>
+</html>
